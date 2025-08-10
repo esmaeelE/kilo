@@ -1,3 +1,8 @@
+#define STATUS_LINE "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"
+
+// char *status_line[200] = {0};
+char status_line[200];
+
 #define KILO_VERSION "0.0.1"
 
 #ifdef __linux__
@@ -1230,6 +1235,9 @@ int vim_enable(int c) {
   case 'h':
     c = ARROW_LEFT;
     break;
+  case ':':
+    strcpy(status_line, ": ");
+    break;
   }
   return c;
 }
@@ -1244,11 +1252,6 @@ void editorProcessKeypress(int fd) {
 
   int c = editorReadKey(fd);
 
-  // vim modes
-  if (c == 'i' && !mode) {
-    printf("i is pressed\n");
-    mode = 1;
-  }
   c = vim_enable(c);
   switch (c) {
   case ENTER: /* Enter */
@@ -1352,12 +1355,15 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Usage: kilo <filename>\n");
     exit(1);
   }
-
   initEditor();
   editorSelectSyntaxHighlight(argv[1]);
   editorOpen(argv[1]);
   enableRawMode(STDIN_FILENO);
-  editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
+
+  strcpy(status_line, STATUS_LINE);
+  // editorSetStatusMessage(STATUS_LINE);
+  editorSetStatusMessage(status_line);
+
   while (1) {
     editorRefreshScreen();
     editorProcessKeypress(STDIN_FILENO);
