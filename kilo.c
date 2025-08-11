@@ -1350,20 +1350,27 @@ void initEditor(void) {
   signal(SIGWINCH, handleSigWinCh);
 }
 
+// main function entry point of program execution
 int main(int argc, char **argv) {
+  // argument parsing
   if (argc != 2) {
     fprintf(stderr, "Usage: kilo <filename>\n");
     exit(1);
   }
+  // initialize editor
   initEditor();
+  // syntax highlight
   editorSelectSyntaxHighlight(argv[1]);
+  // open file with editor
   editorOpen(argv[1]);
+  // enable default mode in kilo editor
   enableRawMode(STDIN_FILENO);
 
+  // show message in bottom of editor
   strcpy(status_line, STATUS_LINE);
   // editorSetStatusMessage(STATUS_LINE);
   editorSetStatusMessage(status_line);
-
+  // editor loop
   while (1) {
     editorRefreshScreen();
     editorProcessKeypress(STDIN_FILENO);

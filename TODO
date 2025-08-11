@@ -12,3 +12,4 @@ MAYBE
 * add vim keybinding
 * make it modular by separating function
 * maintain similarity design
+* implement keypress with another method not busy waiting, like interrupt
